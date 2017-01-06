@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
     "mysql": "^2.12.0",
     "socket.io": "^1.7.2",
     "socket.io-client": "^1.7.2"

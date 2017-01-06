@@ -1,4 +1,4 @@
-re('socket.io').listen(1180);
+var io = require('socket.io').listen(1180);
 var mysql = require('mysql');
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -21,8 +21,9 @@ con.connect(function(err){
   console.log("connection successful");
 });
 
-var user = require('./mysql-interface/user.js')(con);
-require('./socket-interface/server.js')(io, user);
+var userService = require('./mysql-interface/user.js')(con);
+var messageService = require('./mysql-interface/message.js')(con);
+require('./socket-interface/server.js')(io, userService, messageService);
 
 var app = express()
 app.use(bodyParser.json());

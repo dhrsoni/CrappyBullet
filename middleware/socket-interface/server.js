@@ -1,4 +1,4 @@
-module.exports = function(io, user) {
+module.exports = function(io, userService, messageService) {
   var namespaceMessage = io.of('/messages'); // create a message namespace
   namespaceMessage.on('connection', function(socket) {
     // TODO: On connection, a room is auto created with the connection id.
@@ -22,7 +22,7 @@ module.exports = function(io, user) {
 
 
   /*
-  user.findOrCreateUser({displayName: 'dname', email: 'email', uid: 'uid1'})
+  userService.findOrCreateUser({display_name: 'dname', email: 'email', uid: 'uid1'})
   .then(function(data) {
     console.log(data);
   })
@@ -30,5 +30,14 @@ module.exports = function(io, user) {
     console.log("Catch handler " + e)
   });
   */
+
+
+  messageService.addMessage({text: 'text', uid: 'uid1', contact_number: '(900)897-1232', is_incoming: 1, sent_date: 1483734433})
+  .then(function(data) {
+    console.log(data);
+  })
+  .catch(function(e) {
+    console.log("Catch handler " + e)
+  });
 }
 
