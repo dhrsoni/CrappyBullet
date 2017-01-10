@@ -2,6 +2,8 @@ module.exports = function(con) {
 
   return {
     addMessage: addMessage,
+    getMessagesBeforeDateFromNumber: getMessagesBeforeDateFromNumber,
+    getMostRecentMessageFromContacts: getMostRecentMessageFromContacts,
   }
 
   /*
@@ -20,6 +22,46 @@ module.exports = function(con) {
         if (err) return reject(err);
 
         return resolve(result.insertId);
+      });
+    });
+  }
+
+  /*
+   * @param {Object} input
+   * @param {Integer} input.quantity
+   * @param {String} input.uid
+   * @param {[String]} input.contact_number
+   * @param {String} input.before_date
+   * @return {id: Integer, text: String, uid: String, is_incoming: Boolean, sent_date: UNIX_TIMESTAMP}
+   */
+  function getMessagesBeforeDateFromNumber(input) {
+    return new Promise(function(resolve, reject) {
+      con.query('SELECT id, text, uid, is_incoming, UNIX_TIMESTAMP(sent_date) FROM message ' +
+        'WHERE sent_date < FROM_UNIXTIME(?) AND uid = ? AND contact_number = ? ORDER BY sent_date DESC, id DESC LIMIT ?',
+        [input.before_date, input.uid, input.contact_number, input.quantity], function(err, result) {
+        if (err) return reject(err);
+
+        return resolve(result);
+      });
+    });
+  }
+
+  /*
+   * @param {Object} input
+   * @param {String} input.uid
+   * @param {[String]} input.contact_numbers
+   * @return {id: Integer, text: String, uid: String, is_incoming: Boolean, contact_number: String, sent_date: UNIX_TIMESTAMP}
+   */
+  function getMostRecentMessageFromContacts(input) {
+    return new Promise(function(resolve, reject) {
+      con.query('SELECT m.id, m.text, m.uid, m.is_incoming, m.contact_number, UNIX_TIMESTAMP(m.sent_date) FROM message m ' +
+        'INNER JOIN (SELECT contact_number, MAX(sent_date) AS sdate ' +
+        'FROM message WHERE uid = ? AND contact_number IN (?) GROUP BY contact_number) tmp ' +
+        'ON m.contact_number = tmp.contact_number AND m.sent_date = tmp.sdate',
+        [input.uid, input.contact_numbers], function(err, result) {
+        if (err) return reject(err);
+
+        return resolve(result);
       });
     });
   }
