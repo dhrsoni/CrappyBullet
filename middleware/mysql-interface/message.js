@@ -49,16 +49,14 @@ module.exports = function(con) {
   /*
    * @param {Object} input
    * @param {String} input.uid
-   * @param {[String]} input.contact_numbers
    * @return {id: Integer, text: String, uid: String, is_incoming: Boolean, contact_number: String, sent_date: UNIX_TIMESTAMP}
    */
   function getMostRecentMessageFromContacts(input) {
     return new Promise(function(resolve, reject) {
       con.query('SELECT m.id, m.text, m.uid, m.is_incoming, m.contact_number, UNIX_TIMESTAMP(m.sent_date) AS sent_date FROM message m ' +
-        'INNER JOIN (SELECT contact_number, MAX(sent_date) AS sdate ' +
-        'FROM message WHERE uid = ? AND contact_number IN (?) GROUP BY contact_number) tmp ' +
+        'INNER JOIN (SELECT contact_number, MAX(sent_date) AS sdate FROM message WHERE uid = ? GROUP BY contact_number) tmp ' +
         'ON m.contact_number = tmp.contact_number AND m.sent_date = tmp.sdate',
-        [input.uid, input.contact_numbers], function(err, result) {
+        [input.uid], function(err, result) {
         if (err) return reject(err);
 
         return resolve(result);

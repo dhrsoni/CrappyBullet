@@ -47,7 +47,7 @@ module.exports = function(io, userService, messageService) {
     console.log("Catch handler " + e)
   });
 
-  messageService.getMostRecentMessageFromContacts({uid: 'uid1', contact_numbers: ['(900)897-1232', '1', '2', '3']})
+  messageService.getMostRecentMessageFromContacts({uid: 'uid1'})
   .then(function(data) {
     console.log(data);
   })
