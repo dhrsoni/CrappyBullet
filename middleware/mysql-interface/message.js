@@ -36,7 +36,7 @@ module.exports = function(con) {
    */
   function getMessagesBeforeDateFromNumber(input) {
     return new Promise(function(resolve, reject) {
-      con.query('SELECT id, text, uid, is_incoming, UNIX_TIMESTAMP(sent_date) FROM message ' +
+      con.query('SELECT id, text, uid, is_incoming, UNIX_TIMESTAMP(sent_date) AS sent_date FROM message ' +
         'WHERE sent_date < FROM_UNIXTIME(?) AND uid = ? AND contact_number = ? ORDER BY sent_date DESC, id DESC LIMIT ?',
         [input.before_date, input.uid, input.contact_number, input.quantity], function(err, result) {
         if (err) return reject(err);
@@ -54,7 +54,7 @@ module.exports = function(con) {
    */
   function getMostRecentMessageFromContacts(input) {
     return new Promise(function(resolve, reject) {
-      con.query('SELECT m.id, m.text, m.uid, m.is_incoming, m.contact_number, UNIX_TIMESTAMP(m.sent_date) FROM message m ' +
+      con.query('SELECT m.id, m.text, m.uid, m.is_incoming, m.contact_number, UNIX_TIMESTAMP(m.sent_date) AS sent_date FROM message m ' +
         'INNER JOIN (SELECT contact_number, MAX(sent_date) AS sdate ' +
         'FROM message WHERE uid = ? AND contact_number IN (?) GROUP BY contact_number) tmp ' +
         'ON m.contact_number = tmp.contact_number AND m.sent_date = tmp.sdate',
