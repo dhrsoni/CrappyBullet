@@ -52,20 +52,12 @@ function initApp() {
       var providerData = user.providerData; 
       console.log(user);
 
-/*      const messaging = firebase.messaging();
-      messaging.requestPermission()
-      .then(function() {
-        console.log('Notification permission granted.');
-        console.log(messaging.getToken());
-
-      }).then(function(token){
-        console.log("sending token now!!");
         var myVar = localStorage['myKey'] || 'defaultValue';
         //console.log(token);
         if(myVar == "defaultValue"){
-          localStorage['myKey'] = token;
-          var user1 = {ID:'IDd', token:token};
-          var url = "http://192.168.180.1:8080/";
+          localStorage['myKey'] = user.uid;
+          var user1 = {display_name:displayName, email:email,uid:uid,};
+          var url = "http://localhost:8080/newUser";
                   
           $.ajax({
               url: url,
@@ -80,8 +72,6 @@ function initApp() {
               }
           });
         }
-
-      })*/
 
     this.signOutButton.removeAttribute('hidden');
     // Hide sign-in button.
@@ -245,6 +235,9 @@ $(function(){
   // Make sure we remove all previous listeners.
       this.messagesRef.off();
       console.log("from saveMessages!!!")
+
+
+
       //e.preventDefault();
       // Check that the user entered a message and is signed in.
       console.log($('#message').val());
@@ -279,28 +272,6 @@ $(function(){
       } 
     });
 });
-
-/*function saveMessage() {
-  console.log("from saveMessages!!!")
-  //e.preventDefault();
-  // Check that the user entered a message and is signed in.
-  if (this.messageInput.value && this.checkSignedInWithMessage()) {
-    var currentUser = this.auth.currentUser;
-    // Add a new message entry to the Firebase Database.
-    this.messagesRef.push({ 
-      number: "+1484753192",
-      body: this.messageInput.value,
-      photoUrl: currentUser.photoURL || '/images/profile_placeholder.png',
-      devideID: "Chrome_client"
-    }).then(function() {
-      // Clear message text field and SEND button state.
-      FriendlyChat.resetMaterialTextfield(this.messageInput);
-      this.toggleButton();
-    }.bind(this)).catch(function(error) {
-      console.error('Error writing new message to Firebase Database', error);
-    });
-  }
-};*/
 
 
       

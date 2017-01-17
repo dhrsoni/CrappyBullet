@@ -14,6 +14,7 @@ module.exports = function(con) {
    *                   error if problem
    */
   function findOrCreateUser(user) {
+    console.log("findOrCreateUser();")
     return new Promise(function(resolve, reject) {
       con.query('INSERT INTO user (display_name, email, uid) SELECT * FROM (SELECT ?, ?, ?) AS tmp ' +
                 'WHERE NOT EXISTS (SELECT uid FROM user WHERE uid = ?) LIMIT 1',
