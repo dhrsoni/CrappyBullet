@@ -18,6 +18,7 @@ package com.google.firebase.codelab.friendlychat;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -52,9 +53,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -97,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements
     private EditText mMessageEditText;
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
     private GoogleApiClient mGoogleApiClient;
+    private ProgressBar spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,8 +216,18 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 Log.d(TAG,mMessageEditText.getText().toString()+" This is what we send!!!");
-                FriendlyMessage friendlyMessage = new FriendlyMessage("6109695842",mMessageEditText.getText().toString());
-                mFirebaseDatabaseReference.child(MESSAGES_CHILD).push().setValue(friendlyMessage);
+                String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+               // FriendlyMessage friendlyMessage = new FriendlyMessage("6109695842",mMessageEditText.getText().toString());
+                outboundMessage msg = new outboundMessage();
+                msg.setIncoming(true);
+                msg.setNumber("+16109695842");
+                msg.setText(mMessageEditText.getText().toString());
+                msg.setTime(Calendar.getInstance().getTime().toString());
+                msg.setUid(refreshedToken);
+                msg.setEmail(mFirebaseUser.getEmail());
+                sendMessage sendMsg = new sendMessage(msg);
+                sendMsg.execute();
+               // mFirebaseDatabaseReference.child(MESSAGES_CHILD).push().setValue(friendlyMessage);
                 mMessageEditText.setText("");
                 //mFirebaseAnalytics.logEvent(MESSAGE_SENT_EVENT, null);
 
@@ -239,10 +253,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.crash_menu:
-                FirebaseCrash.logcat(Log.ERROR, TAG, "crash caused");
-                causeCrash();
-                return true;
             case R.id.sign_out_menu:
                 mFirebaseAuth.signOut();
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient);

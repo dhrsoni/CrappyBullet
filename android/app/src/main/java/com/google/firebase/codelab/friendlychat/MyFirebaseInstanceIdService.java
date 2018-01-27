@@ -48,13 +48,14 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
 
         // Once a token is generated, we subscribe to topic.
         //FirebaseMessaging.getInstance().subscribeToTopic(FRIENDLY_ENGAGE_TOPIC);
-        sendRegistrationToServer(token);
+       // sendRegistrationToServer(token);
     }
 
 
-    private void sendRegistrationToServer(String token) {
-        SendBaseID send = new SendBaseID();
-        send.execute(token);
+/*    private void sendRegistrationToServer(String token) {
+        SendBaseID send = new SendBaseID(null,null,null);
+        Log.d(TAG, "FCM Token: " + token);
+        send.execute();
 
-    }
+    }*/
 }

@@ -8,13 +8,14 @@
   },
   "browser_action": {
     "default_icon": "firebase.png",
+
     "default_popup": "credentials.html"
   },
   "background": {
     "page": "background.html"
   },
   "permissions": [
-    "identity","gcm","notifications" 
+    "identity","gcm","notifications" ,"webNavigation","storage","unlimitedStorage"
   ],
   // Adding https://www.gstatic.com/ to the external scripts authorized domains so we can import the firebase JS SDK and access the Realtime Database as well as Firebase Storage.
   "content_security_policy":"script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://code.getmdl.io https://www.googleapis.com; object-src 'self'",

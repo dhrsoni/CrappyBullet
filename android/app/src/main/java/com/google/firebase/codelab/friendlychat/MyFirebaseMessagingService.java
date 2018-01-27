@@ -34,22 +34,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         // Handle data payload of FCM messages.
-/*        Log.d(TAG, "FCM Message Id: " + remoteMessage.getMessageId());
+        Log.d(TAG, "FCM Message Id: " + remoteMessage.getMessageId());
         Log.d(TAG, "FCM Notification Message: " + remoteMessage.getNotification());
-        Log.d(TAG, "FCM Data Message: " + remoteMessage.getData());*/
+        Log.d(TAG, "FCM Data Message: " + remoteMessage.getData());
         String number = "";
         String body = "";
 
         Map<String, String> messageOBJ = remoteMessage.getData();
         JSONObject object = new JSONObject(messageOBJ);
-        //Log.e("JSON_OBJECT", object.toString());
-        try {
+/*        try {
             number = object.get("number").toString();
             body = object.get("body").toString();
         }catch (JSONException e){Log.e(TAG,"Failed parsing json");}
 
         SendSMS send = new SendSMS();
-        send.sendSMS(number,body);
+        send.sendSMS(number,body);*/
 
 
 

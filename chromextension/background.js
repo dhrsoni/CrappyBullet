@@ -7,7 +7,8 @@
     storageBucket: "friendlyc-b831c.appspot.com",
     messagingSenderId: "21116217672"
   };
-  firebase.initializeApp(config);
+  firebase.initializeApp(config);   
+
 
 /**
  * initApp handles setting up the Firebase context and registering
@@ -25,27 +26,64 @@
  */
 
 function initApp() {
-  // Listen for auth state changes.
+  // Listen for auth state changes. vxc
+  //chrome.gcm.onMessage.addListener(messageReceived);
   firebase.auth().onAuthStateChanged(function(user) {
     console.log('User state change detected from the Background script of the Chrome Extension:', user);
   }); 
-}
 
-var ref = firebase.database().ref('TestUser');
-ref.on('child_added', setMessage);
-function setMessage(data) {
-var val = data.val();
-if(val.devideID != 'Chrome_client'){
-	  chrome.notifications.create('Crappy bullet', {
-	    type: 'basic',
-	    iconUrl: 'firebase-logo.png',
-	    title: val.number,
-	    message: val.body
-	 }, function(notificationId) {});
-}
 
 
 }
+
+
+function firstTimeRegistration() {
+/*   chrome.storage.local.get("registered", function(result) {
+    // If already registered, bail out.
+    if (result["registered"])
+      return;
+
+    registerWindowCreated = true;
+    chrome.app.window.create(
+      "register.html",
+      {  width: 500,
+         height: 400,
+         frame: 'chrome'
+      },
+      function(appWin) {}
+    );
+  }); */
+}
+
+chrome.gcm.onMessage.addListener(function(messageReceived){
+  console.log("got message@!!!!");
+  console.log(messageReceived);
+  chrome.notifications.create('Crappy bullet', {
+    type: 'basic',
+    iconUrl: 'firebase-logo.png',
+    title: "val.number",
+    message: "val.body"
+  }, function(notificationId) {})
+
+});
+
+
+
+/*  var ref = firebase.database().ref('TestUser');
+  ref.on('child_added', setMessage);
+  function setMessage(data) {
+  var val = data.val();
+  if(val.devideID != 'Chrome_client'){
+      chrome.notifications.create('Crappy bullet', {
+        type: 'basic',
+        iconUrl: 'firebase-logo.png',
+        title: val.number,
+        message: val.body
+    }, function(notificationId) {});
+  }
+
+
+}*/
 
 
 window.onload = function() {

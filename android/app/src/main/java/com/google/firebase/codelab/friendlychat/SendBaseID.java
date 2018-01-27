@@ -1,7 +1,13 @@
 package com.google.firebase.codelab.friendlychat;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,19 +25,33 @@ import java.net.URL;
  * Created by Dhruv on 11/6/2016.
  */
 
-public class SendBaseID extends AsyncTask<String, Void, Void> {
+public class SendBaseID extends AsyncTask<Void, Void, Void> {
     private static final String TAG = "SendBaseID";
+    private SignInActivity lastActivity;
+    private boolean isSuccess = true;
+    private  ProgressBar spinner;
+    private userDetail detail;
+
+
+    public SendBaseID(SignInActivity lastActivity, ProgressBar spinner,userDetail detail){
+        this.lastActivity = lastActivity;
+        this.spinner = spinner;
+        this.detail = detail;
+    }
 
     @Override
-    protected Void doInBackground(String... strings) {
+    protected Void doInBackground(Void... voids) {
         StringBuilder sb = new StringBuilder();
         JSONObject js = new JSONObject();
         String json = "";
-        String http = "http://192.168.0.109:8080/";
+        String http = "http://192.168.173.1:8080/newUser";
+        Log.d(TAG,"SendbaseID http "+http);
         HttpURLConnection urlConnection=null;
         try {
             js.put("ID","IDa");
-            js.put("token",strings[0]);
+            js.put("fcmID",detail.getUid());
+            js.put("display_name",detail.getName());
+            js.put("email",detail.getEmail());
             json = js.toString();
 
             URL url = new URL(http);
@@ -66,12 +86,35 @@ public class SendBaseID extends AsyncTask<String, Void, Void> {
             }
 
         }catch (JSONException e){
-            Log.d(TAG,"Creating jason faild");
+            Log.e(TAG,"Creating jason faild");
+            isSuccess = false;
         }catch (MalformedURLException u){
-            Log.d(TAG,"MalformedURLException");
+            Log.e(TAG,"MalformedURLException");
+            isSuccess = false;
         }catch (IOException e){
-            Log.d(TAG,"IOException");
+            Log.d(TAG,e.toString());
+            Log.e(TAG,"IOException");
+            isSuccess = false;
+
         }
         return null;
     }
+
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+
+        if(isSuccess) {
+            lastActivity.startActivity(new Intent(lastActivity, MainActivity.class));
+        }else{
+            spinner.setVisibility(View.GONE);
+            FirebaseAuth mFirebaseAuth = FirebaseAuth.getInstance();
+            //mFirebaseUser = mFirebaseAuth.getCurrentUser();
+            mFirebaseAuth.signOut();
+
+        }
+
+    }
+
 }

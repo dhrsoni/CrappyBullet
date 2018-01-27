@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -41,6 +42,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.iid.FirebaseInstanceId;
+
 
 public class SignInActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
@@ -51,11 +54,14 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mFirebaseAuth;
+    private ProgressBar spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+        spinner=(ProgressBar)findViewById(R.id.progressBar1);
+        spinner.setVisibility(View.GONE);
 
         // Assign fields
         mSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
@@ -91,10 +97,10 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in_button:
+
+                spinner.setVisibility(View.VISIBLE);
                 signIn();
                 break;
-            default:
-                return;
         }
     }
 
@@ -123,6 +129,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+        final SignInActivity currActivity = SignInActivity.this;
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mFirebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -138,8 +145,19 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                             Toast.makeText(SignInActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            startActivity(new Intent(SignInActivity.this, MainActivity.class));
-                            finish();
+                            FirebaseUser user = mFirebaseAuth.getCurrentUser();
+                            String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+                            Log.d(TAG,"TOKEN!!!!!!"+refreshedToken);
+                            String[] userInfo = new String[3];
+/*                            userInfo[0] = refreshedToken;
+                            userInfo[1] = user.getDisplayName();
+                            userInfo[2] = user.getEmail();*/
+                            userDetail detail = new userDetail( user.getEmail(),refreshedToken,user.getDisplayName());
+                            SendBaseID baseid = new SendBaseID(currActivity,spinner,detail);
+                            baseid.execute();
+                            Log.d(TAG,"STATUS!!!!!!"+baseid.getStatus().toString());
+    /*                        startActivity(new Intent(SignInActivity.this, MainActivity.class));
+                            finish();*/
                         }
                     }
                 });

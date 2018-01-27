@@ -16,9 +16,11 @@ module.exports = function(con) {
    * @return {Integer} insert id
    */
   function addMessage(message) {
+    console.log("addMessage()");
+    console.log(addMessage);
     return new Promise(function(resolve, reject) {
-      con.query('INSERT INTO message (text, uid, contact_number, is_incoming, sent_date) VALUES (?, ?, ?, ?, FROM_UNIXTIME(?))',
-        [message.text, message.uid, message.contact_number, message.is_incoming, message.sent_date], function(err, result) {
+      con.query('INSERT INTO message (msg, email,contact_number, is_incoming) VALUES (?, ?, ?, ?)',
+        [message.text, message.email, message.contact_number, message.is_incoming], function(err, result) {
         if (err) return reject(err);
 
         return resolve(result.insertId);

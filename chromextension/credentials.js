@@ -17,7 +17,7 @@
 
   this.submitButton = document.getElementById('submit');
   this.messageForm = document.getElementById('message-form');
-   this.messageInput = document.getElementById('message');
+  this.messageInput = document.getElementById('message');
 
   
   //messageForm.addEventListener('submit', saveMessage(),false);
@@ -35,12 +35,11 @@ function initApp() {
 
 
 
-  signInButton.addEventListener('click', startSignIn, false);
-  signOutButton.addEventListener('click', startSignout, false);
+  signInButton.addEventListener('click', startSignIn);
+  signOutButton.addEventListener('click', startSignout);
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
       // User is signed in.
-      console.log(user.uid);
       this.signInButton = document.getElementById('sign-in');
       this.signOutButton = document.getElementById('sign-out');
       var displayName = user.displayName;
@@ -49,14 +48,13 @@ function initApp() {
       var photoURL = user.photoURL;
       var isAnonymous = user.isAnonymous;
       var uid = user.uid;
-      var providerData = user.providerData; 
-      console.log(user);
+      var providerData = user.providerData;
 
-        var myVar = localStorage['myKey'] || 'defaultValue';
+/*         var myVar = localStorage['myKey'] || 'defaultValue';
         //console.log(token);
         if(myVar == "defaultValue"){
           localStorage['myKey'] = user.uid;
-          var user1 = {display_name:displayName, email:email,uid:uid,};
+          var user1 = {display_name:displayName, email:email};
           var url = "http://localhost:8080/newUser";
                   
           $.ajax({
@@ -71,18 +69,33 @@ function initApp() {
                   console.log(JSON.stringify(data));
               }
           });
-        }
+        } */
 
     this.signOutButton.removeAttribute('hidden');
     // Hide sign-in button.
     this.signInButton.setAttribute('hidden', 'true');
-     $( "#main_paig" ).show();
+    $( "#main_paig" ).show();
     $("#login_page").hide();
     $( "#header" ).show();
     $('body').css("background-color","#ffffff");
-     //return messaging.getToken();
-     fireDB();
-      // [END_EXCLUDE]
+
+
+    // fireDB();
+    var myVar = localStorage['registered'] || 'defaultValue';
+    if(myVar == "defaultValue"){
+      localStorage['registered'] =true;
+      register(user);
+    }
+/*       chrome.storage.local.get("registered", function(result) {
+        // If already registered, bail out.
+        if (result["registered"]){
+          console.log("found")
+          return;
+        }
+        // Up to 100 senders are allowed.
+        register(user);
+      }); */
+    // [END_EXCLUDE]
     } else {
       // Let's try to get a Google auth token programmatically.
       // [START_EXCLUDE]
@@ -97,6 +110,66 @@ function initApp() {
     //document.getElementById('quickstart-button').disabled = false;
   });
 }
+
+function register(user) {
+  console.log("register()");
+  var senderId = "21116217672";
+  chrome.gcm.register([senderId],function registerCallback(registerCallback){
+    if (chrome.runtime.lastError) {
+      // When the registration fails, handle the error and retry the
+      // registration later.
+      return;
+    }
+    console.log(registerCallback);
+    var user1 = {display_name:user.displayName, email:user.email,fcmID:registerCallback};
+    var url = "http://localhost:8080/newUser";
+            
+    $.ajax({
+        url: url,
+        type: 'POST',
+        ContentType: 'application/json',
+        dataType: "json",
+        crossDomain: true, 
+        data: user1,          
+    }).done(function() {
+      console.log("DONE!!");
+      console.log('success');
+      chrome.storage.local.set({registered: true});
+    }).fail(function() {
+      console.log( "error" );
+      startSignout();
+    });
+
+  });
+
+  // Prevent register button from being click again before the registration
+  // finishes.
+}
+
+function registerCallback(registrationId) {
+
+  user
+  //console.log(registrationId);
+  // Send the registration token to your application server.
+  sendRegistrationId(function(succeed) {
+    // Once the registration token is received by your server,
+    // set the flag such that register will not be invoked
+    // next time when the app starts up.
+    if (succeed)
+      chrome.storage.local.set({registered: true});
+  },registrationId);
+}
+
+function sendRegistrationId(callback,registrationId) {
+  // Send the registration token to your application server
+  // in a secure way.
+  console.log(registrationId);
+}
+
+messaging.onMessage(function(payload) {
+  console.log("Message received. ", payload);
+  // ...
+});
 
 function fireDB(){
 
@@ -190,10 +263,22 @@ function startAuth(interactive) {
  */
 function startSignIn() {
     startAuth(true);
+   //signIn();
 }
 
 function startSignout(){
-    firebase.auth().signOut();
+  firebase.auth().signOut().then(function() {
+    // Sign-out successful.
+    console.log("Sign-out successful");
+  }).catch(function(error) {
+    // An error happened.
+    console.log("Error singingout");
+  })
+
+  $( "#main_paig" ).hide();
+  $("#login_page").show();
+  $( "#header" ).hide();
+
 }
 
 window.onload = function() {
@@ -210,6 +295,8 @@ function initFirebase() {
   console.log("token");
   console.log(token);
 };
+
+
 
 
 function checkSignedInWithMessage(){
@@ -276,6 +363,7 @@ $(function(){
 
       
 function signIn(){
+    var provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithPopup(provider).then(function(result) {
     // This gives you a Google Access Token. You can use it to access the Google API.
     var token = result.credential.accessToken;

@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "dependencies": {
-    "body-parser": "^1.15.2",
+    "ajax-request": "^1.2.3",
+    "body-parser": "^1.18.2",
     "express": "^4.14.0",
+    "firebase-admin": "^5.6.0",
     "mysql": "^2.12.0",
+    "node-gcm": "^0.14.9",
     "socket.io": "^1.7.2",
     "socket.io-client": "^1.7.2"
   },
