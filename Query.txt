@@ -1,0 +1,17 @@
+CREATE TABLE `message` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `text` varchar(160) NOT NULL,
+  `uid` varchar(16) NOT NULL,
+  `contact_number` varchar(20) NOT NULL,
+  `is_incoming` tinyint(1) NOT NULL,
+  `sent_date` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `user` (
+  `display_name` varchar(40) NOT NULL,
+  `uid` varchar(500) NOT NULL,
+  `email` varchar(30) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

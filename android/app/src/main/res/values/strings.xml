@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Crappy Bullet</string>
+    <string name="sign_in">Sign in</string>
+    <string name="fresh_config">Refresh</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="invite_menu_label">Invite Friend</string>
+    <string name="send">Send</string>
+</resources>
