@@ -1,27 +1,26 @@
 {
   "manifest_version": 2,
-  "name": "Crappy Bullet",
-  "description": "Crappy version of push bullet.",
+  "name": "Crappy Bullet ng",
+  "description": "Crappy version of push bullet on ng2",
   "version": "1.0",
   "icons": {
     "128": "firebase.png"
   },
   "browser_action": {
-    "default_icon": "firebase.png",
 
-    "default_popup": "credentials.html"
+    "default_popup": "index.html"
   },
-  "background": {
+/*  "background": {
    // "page": "background.html",
     "scripts": [
-      "idb.js"
+      "idb.js" script-src 'self' 'unsafe-eval'
     ]
-  },
+  },*/
   "permissions": [
     "identity","gcm","notifications" ,"webNavigation","storage","unlimitedStorage"
   ],
   // Adding https://www.gstatic.com/ to the external scripts authorized domains so we can import the firebase JS SDK and access the Realtime Database as well as Firebase Storage.
-  "content_security_policy":"script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://code.getmdl.io https://www.googleapis.com; object-src 'self'",
+  "content_security_policy":"script-src 'self' 'unsafe-eval' https://www.gstatic.com/ https://*.firebaseio.com https://code.getmdl.io https://www.googleapis.com; object-src 'self'",
   "oauth2": {
     // TODO(DEVELOPER): Change the line below to the OAuth Client ID you created as described in https://developer.chrome.com/apps/app_identity#google
     "client_id": "995308252717-ddfqrhfp04ss3r1c1snetls4eqd2iogu.apps.googleusercontent.com",

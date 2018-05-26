@@ -34,7 +34,6 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
-middleware/node_modules/*
 
 # e2e
 /e2e/*.js

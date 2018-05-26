@@ -1,3 +1,5 @@
+
+
 // TODO(DEVELOPER): Change the values below using values from the initialization snippet: Firebase Console > Overview > Add Firebase to your web app.
 // Initialize Firebase
   var config = {
@@ -99,15 +101,33 @@ function initApp() {
     } else {
       // Let's try to get a Google auth token programmatically.
       // [START_EXCLUDE]
-    this.signOutButton.setAttribute('hidden', 'true');
-    this.signInButton.removeAttribute('hidden');
-    $( "#main_paig" ).hide();
-    $("#login_page").show();
-    $( "#header" ).hide();
-    $('body').css("background-color","#061A5F");
-      // [END_EXCLUDE]
-    }
-    //document.getElementById('quickstart-button').disabled = false;
+      this.signOutButton.setAttribute('hidden', 'true');
+      this.signInButton.removeAttribute('hidden');
+      $( "#main_paig" ).hide();
+      $("#login_page").show();
+      $( "#header" ).hide();
+      $('body').css("background-color","#061A5F");
+        // [END_EXCLUDE]
+      }
+      if (!('indexedDB' in window)) {
+        console.log('This browser doesn\'t support IndexedDB');
+        return;
+      }else{
+        
+        if (!('indexedDB' in window)) {
+          console.log('This browser doesn\'t support IndexedDB');
+          return;
+        }
+      
+        var dbPromise = idb.open('test-db2', 1, function(upgradeDb) {
+          console.log('making a new object store');
+          if (!upgradeDb.objectStoreNames.contains('firstOS')) {
+            upgradeDb.createObjectStore('firstOS');
+          }
+        });
+
+
+      }
   });
 }
 
@@ -124,21 +144,8 @@ function register(user) {
     var user1 = {display_name:user.displayName, email:user.email,fcmID:registerCallback};
     var url = "http://localhost:8080/newUser";
             
-    $.ajax({
-        url: url,
-        type: 'POST',
-        ContentType: 'application/json',
-        dataType: "json",
-        crossDomain: true, 
-        data: user1,          
-    }).done(function() {
-      console.log("DONE!!");
-      console.log('success');
-      chrome.storage.local.set({registered: true});
-    }).fail(function() {
-      console.log( "error" );
-      startSignout();
-    });
+/* 
+ */
 
   });
 
@@ -183,7 +190,7 @@ function fireDB(){
     var val = data.val();
     this.displayMessage(data.key, val.number, val.body, val.photoUrl, val.imageUrl);
   }.bind(this);
-  this.messagesRef.limitToLast(12).on('child_added', setMessage);
+  this.messagesRef.limitToLast(12).on('child_added', setMessage); 
   this.messagesRef.limitToLast(12).on('child_changed', setMessage);
 
 

@@ -15,19 +15,19 @@ module.exports = function(con) {
    * @param {Integer} message.sent_date - seconds since unix epoch
    * @return {Integer} insert id
    */
-  function addMessage(message) {
+  function addMessage(message,ID) {
     console.log("addMessage()");
     console.log(addMessage);
     return new Promise(function(resolve, reject) {
-      con.query('INSERT INTO message (msg, email,contact_number, is_incoming) VALUES (?, ?, ?, ?)',
-        [message.text, message.email, message.contact_number, message.is_incoming], function(err, result) {
+      con.query('INSERT INTO message (msg, email,contact_number, is_incoming,sent_date,User_ID) VALUES (?, ?, ?, ?)',
+        [message.text, message.email, message.contact_number, message.is_incoming,message.sent_date,ID], function(err, result) {
         if (err) return reject(err);
 
         return resolve(result.insertId);
       });
     });
   }
-
+//email, msg, contact_number, is_incoming, sent_date, User_ID
   /*
    * @param {Object} input
    * @param {Integer} input.quantity
@@ -57,7 +57,7 @@ module.exports = function(con) {
     return new Promise(function(resolve, reject) {
       con.query('SELECT m.id, m.text, m.uid, m.is_incoming, m.contact_number, UNIX_TIMESTAMP(m.sent_date) AS sent_date FROM message m ' +
         'INNER JOIN (SELECT contact_number, MAX(sent_date) AS sdate FROM message WHERE uid = ? GROUP BY contact_number) tmp ' +
-        'ON m.contact_number = tmp.contact_number AND m.sent_date = tmp.sdate',
+        'ON m.contact_number = tmp.co ntact_number AND m.sent_date = tmp.sdate',
         [input.uid], function(err, result) {
         if (err) return reject(err);
 

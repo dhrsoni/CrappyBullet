@@ -11,7 +11,7 @@ admin.initializeApp({
   databaseURL: "https://friendlyc-b831c.firebaseio.com"
 });
 
-/* var con = mysql.createConnection({
+var con = mysql.createConnection({
   host: process.env.DB_HOST,
   user: "root",
   password: "password",
@@ -28,7 +28,7 @@ con.connect(function(err){
   }
   console.log("connection successful");
 });
- */
+
 
       
 /*     console.log("findOrCreateUser();");
@@ -105,114 +105,39 @@ function remove(){
 }
 
 //remove();
-
-function createGroup(){
- // console.log("createGroup()");
+function getNotificationToken(user) {
+  console.log("getNotificationToken();");
   return new Promise(function(resolve, reject) {
-   // console.log("createGroup()");
-    var obj;
-    var user1 = {
-      operation: "create",
-      notification_key_name: "testDrew4",
-      registration_ids: ["APA91bGm7NhtRlmHMm5eV-t1PNHjU9LvoPAOYDEpUfg2l0i5aCVhujxvJx-lDzwoaURyAmPw0gCFnvBFHKfZJPeAXYhKcgb89wbjFk5qPfxuqax_8c_PyheDyF2v6Quj_gHVCSPASkrn"]  
-    };
-
-    var header = {ContentType:"application/json",Authorization:"key=AIzaSyDapDGjhUAKvgqsl9pa2lDGnCAot3B3k90",project_id:"21116217672"}
-
-    request.post({
-      url: 'https://android.googleapis.com/gcm/notification',
-      data: user1,
-      headers: header
-    },function output(error, response, body){
-      obj = JSON.parse(body);
-      //console.log("register toekn response ");
-      //console.log(obj);
-/*       if(obj.nonotification_key != null){
-        return obj.nonotification_key;
-      }else{
-        return undefined;
-      } */
-      return resolve(obj);
-    });
-  });
-}
-
-/*    var notificationKey =  createGroup();
-Promise.all([notificationKey]).then(function(data){
-  console.log("promice data");
-  console.log(data);
-});    */
-
-var notificationKey = "APA91bHfl2haPFUvQ50aDp62Hmv9LECHfSIcALDQ3_CdbSiYMXP7oyqreeWDfzbGWWM_Jn8plCYyHDDR3OY5kTFfkBvWvpAQg4FPcmurKHSN4h9pqMhScjc";
-
-var payload = {
-  data: {
-    number: "6109695842",
-    time:  "hi"
-  }
-};
-
-// Send a message to the device corresponding to the provided
-// registration token.
-admin.messaging().sendToDeviceGroup(notificationKey, payload)
-.then(function(response) {
-  // See the MessagingDeviceGroupResponse reference documentation for
-  // the contents of response.
-  console.log("Successfully sent message:", response);
-})
-.catch(function(error) {
-  console.log("Error sending message:", error);
-});
-
-
-
-//remove();
-
-var user = {
-  display_name:"Drew sony",
-  email:"dewsony1994@gmai.com1",
-  fcmID:"salkdjla;ksjfl;aksjdfkajsdklf"
-}
-
-function findOrCreateUser(user,notification_key) {
-  console.log("findOrCreateUser();");
-  return new Promise(function(resolve, reject) {
-    con.query('INSERT INTO user (display_name,email,notification_key) VALUES (?, ?, ?);insert into gcm_fcm_id (email,id) value (?,?);',
-    [user.display_name, user.email,notification_key,user.email,user.fcmID], function(err, result) {
+    con.query('select id,notification_key from user where email=?',
+    [user.email], function(err, result) {
       if (err) return reject(err);
+      //if(result.length > 1) return reject(err);
+      //console.log("result from getNotificationToken()");
+      //console.log(result);
       return resolve(result);
     });
   });
+}   
+
+
+user = {email:'drewsony1994@gmail.com'}
+//var test = await getNotificationToken(user);
+/* Promise.all([test]).then(function(key){
+  console.log(("I'm here!!!!"));
+  console.log(key[0][0].id);
+
+}); */
+async function f1() {
+  var x = await getNotificationToken(user);
+  return x;
+}
+
+function f2(){
+  console.log("calling f1()");
+  var y = f1();
+  console.log(y);
+  console.log("f1() result");
 }
 
 
-/* var notificationKey =  findOrCreateUser(user,"somenitificationkey");
-Promise.all([notificationKey]).then(function(data){
-  console.log("promice data");
-  console.log(data);
-}).catch(function(err) {
-  console.log("Error is error");
-  console.log(err); // some coding error in handling happened
-}); */
-
-/* var notificationKey = "APA91bG0CtWx4y4M1VWmUwy2mWVxNTMLVBk6sNSkhXOklf4N9dnAuIInF-asVMNG-IjRhTbMbAc0YVhMrJq5ycguNijnwgVqSJzYWZxbjL6RvQGWgJj6W3H0KQo6Wbr4ru30t3UB98gz";
-
-
-var payload = {
-  data: {
-    number: "6109695842",
-    time:  "12:51am"
-  }
-};
-
-// Send a message to the device corresponding to the provided
-// registration token.
-admin.messaging().sendToDeviceGroup(notificationKey, payload)
-.then(function(response) {
-  // See the MessagingDeviceGroupResponse reference documentation for
-  // the contents of response.
-  console.log("Successfully sent message:", response);
-})
-.catch(function(error) {
-  console.log("Error sending message:", error);
-}); */
+f2();

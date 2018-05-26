@@ -100,7 +100,8 @@ app.post('/newUser', function(req, res) {
         }else if(data[0] == 0 && data[1]==1){
           console.log("data[0] == 0 && data[1]==1");
           var notification_keypromice =  userService.getNotificationToken(req.body);
-          var fmcKeyEntry = userService.insertFcmToken(req.body);
+          var User_ID = data[1][0].id;
+          var fmcKeyEntry = userService.insertFcmToken(req.body,User_ID);
           //var obj = addToGroup(req.body,notification_key);
           
           Promise.all([notification_keypromice,fmcKeyEntry]).then(function(keys){
@@ -210,10 +211,11 @@ app.post('/msgReceived', function(req, res) {
   res.header('Access-Control-Allow-Headers', 'content-Type, Authorization, Content-Length, X-Requested-With, application/json');
   //console.log(req.body);
 
-  console.log("THIS IS TOKEN!!!!! "+req.body.sent_date)
+  //console.log("THIS IS TOKEN!!!!! "+req.body.sent_date)
   if(req.body!=null){
-    var resp = messageService.addMessage(req.body);
-    var notificationKey = userService.getNotificationToken(req.body)
+    //var resp = messageService.addMessage(req.body);
+    var resp = addMessage(req.body);
+    var notificationKey = getNotificationKey(req.body);
     Promise.all([resp,notificationKey]).then(function(data){
       console.log("notificationKey data!");
       var dataArr = data[1];
@@ -275,9 +277,16 @@ app.post('/msgReceived', function(req, res) {
   
 });
 
+async function getNotificationKey(body){
+    var resp = await userService.getNotificationToken(req.body);
+    return resp;
+}
+
+async function addMessage(body,ID){
+  var resp = await messageService.addMessage(body);
+  return resp;
+}
 
 app.listen(8080, function () {
   console.log('App listening on port 8080!')
 })
-
-

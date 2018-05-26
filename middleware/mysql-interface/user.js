@@ -31,7 +31,7 @@ module.exports = function(con) {
   function getNotificationToken(user) {
     console.log("getNotificationToken();");
     return new Promise(function(resolve, reject) {
-      con.query('select notification_key from user where email=?',
+      con.query('select id,notification_key from user where email=?',
       [user.email], function(err, result) {
         if (err) return reject(err);
         //if(result.length > 1) return reject(err);
@@ -45,11 +45,11 @@ module.exports = function(con) {
   
 
 
-  function insertFcmToken(user) {
+  function insertFcmToken(user,User_ID) {
     console.log("findOinsertFcmTokenrCreateUser();");
     return new Promise(function(resolve, reject) {
-      con.query('insert into gcm_fcm_id (email,id) value (?,?);' ,
-      [user.email,user.fcmID], function(err, result) {
+      con.query('insert into gcm_fcm_id (email,id,User_ID) value (?,?,?);' ,
+      [user.email,user.fcmID,User_ID], function(err, result) {
         if (err) return reject(err);
         return resolve(result);
       });
